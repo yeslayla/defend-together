@@ -1,0 +1,27 @@
+name: Run Server Tests
+
+on:
+  push:
+    paths:
+    - 'server/**'
+    - '.github/workflows/test_server.yml'
+  pull_request:
+    paths:
+    - 'server/**'
+    - '.github/workflows/test_server.yml'
+
+jobs:
+  Testing:
+    runs-on: ubuntu-latest
+    container: 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build Container
+      working-directory: server
+      run: |
+        docker build -t local .
+    - name: Run Testing Script
+      working-directory: server
+      run: |
+        docker run local /bin/bash -c "cd /dt; /dt/run_tests.sh"
