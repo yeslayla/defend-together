@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Defend Together ECS Infrastructure
+Parameters:
+  #------------------------
+  # Deployment Information
+  #------------------------
+  environment:
+    Type: String
+    Description: Name of the environment to use in naming.
+    Default: production
+  release:
+    Type: String
+    Description: Name of the release name of the stack version to use.
+    Default: production
+    AllowedValues: ['develop', 'production']
+    ConstraintDescription: "Must be a possible release version."
+  VpcId:
+    Description: ID of the VPC
+    Type: AWS::EC2::VPC::Id
+  
+  #-----------------
+  # Load Balancing 
+  #-----------------
+  PublicSubnets:
+    Description: The public subnets for the ALB to run in. (Space seperated)
+    Type: String
+
+  #-----
+  # DNS
+  #-----
+  Domain:
+    Type: String
+    Description: The domain to create the endpoint on (Must have an existing hosted zone ex. `example.com`) Leave blank to skip DNS.
+    Default: ""
+  SubDomain:
+    Type: String
+    Description: The subdomain to be used by dt. (ex. `dt.example.com`)
+    Default: dt
+
+  #------------
+  # CloudWatch
+  #------------
+  LogGroup:
+    Type: String
+    Description: The AWS CloudWatch log group to output logs to.
+    Default: "/ecs/dt"
+
+Conditions:
+  CreateDns: !Not [!Equals [!Ref Domain, ""]]
+
+Resources:
+
+  #-----
+  # DNS
+  #-----
+  DnsRecords:
+    Condition: CreateDns
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/dns.yaml'
+      Parameters:
+        environment: !Ref environment
+        Domain: !Ref Domain
+        SubDomain: !Ref SubDomain
+        DtDNS: !GetAtt LoadBalancing.Outputs.NlbDnsName
+
+  #-----------------
+  # Load Balancing 
+  #-----------------
+  LoadBalancing:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/load_balancing.yaml'
+      Parameters:
+        environment: !Ref environment
+        release: !Ref release
+        VpcId: !Ref VpcId
+        PublicSubnets: !Join [",", !Split [" ", !Ref PublicSubnets]]
+
+  EcsCluster:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/cluster/top.yaml'
+      Parameters:
+        Environment: !Ref environment
+        VpcId: !Ref VpcId
+        SubnetIds: !Join [",", !Split [" ", !Ref PublicSubnets]]
+        Project: "DT"
+
+  #-------------------
+  # ECS Task & Service
+  #-------------------
+  TaskDefinition:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/task.yaml'
+      Parameters:
+        LogGroupName: !Ref LogGroup
+
+
+  EcsService:
+    DependsOn: LoadBalancing
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !GetAtt EcsCluster.Outputs.Cluster
+      DesiredCount: 1
+      TaskDefinition: !GetAtt TaskDefinition.Outputs.TaskArn
+      LoadBalancers:  
+        - ContainerName: "defend-together"
+          ContainerPort: 7777
+          TargetGroupArn: !GetAtt LoadBalancing.Outputs.TargetGroup

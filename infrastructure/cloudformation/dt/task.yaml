@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Defend Togeher ECS Task
+Parameters:
+  LogGroupName:
+    Type: String
+    Description: The AWS CloudWatch log group to output logs to.
+    Default: "/ecs/dt"
+
+Resources:
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+      LogGroupName: !Ref LogGroupName
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+      - Name: defend-together
+        Essential: 'true'
+        Image: "josephbmanley/defend-together:latest"
+        MemoryReservation: 800
+        PortMappings:
+        - HostPort: 0
+          ContainerPort: 7777
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-group:
+              Ref: LogGroup
+Outputs:
+  TaskArn:
+    Description: ARN of the TaskDefinition
+    Value: !Ref TaskDefinition

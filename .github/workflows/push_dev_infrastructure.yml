@@ -1,0 +1,26 @@
+name: Push Dev Infrastructure
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2.1.0
+      with:
+        submodules: 'true'
+    - name: Ship to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --follow-symlinks --delete
+      env:
+        SOURCE_DIR: infrastructure/cloudformation
+        AWS_REGION: "us-east-1"
+        DEST_DIR: dt/develop/cloudformation
+        AWS_S3_BUCKET: sumu-stacks
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
