@@ -96,7 +96,7 @@ jobs:
     - name: Deploy to AWS CloudFormation
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
-        name: ecs-nakama-stack
-        template: cloudformation/nakama/top.yaml
+        name: dt-infrastructure
+        template: infrastructure/cloudformation/dt/top.yaml
         capabilities: "CAPABILITY_NAMED_IAM,CAPABILITY_IAM"
         parameter-overrides: VpcId=${{ secrets.VPC_ID }},Domain=${{ secrets.DOMAIN }},PublicSubnets=${{ secrets.SUBNET_IDS }}
