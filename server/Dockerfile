@@ -6,4 +6,4 @@ ADD / /dt
 
 RUN cd /dt; /dt/build.sh
 
-CMD ["./builds/server.out"]
+CMD ["/dt/builds/server.out"]
