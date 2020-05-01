@@ -28,18 +28,16 @@ void * console_logic(void *)
 
     while(console_is_running)
     {
-        if(!std::getline(std::cin, input_string))
+        if(std::getline(std::cin, input_string))
         {
-            std::cout << "Console I/O error!" << std::endl;
-        }
-
-        if(input_string == "stop")
-        {
-            console_is_running = false;
-        }
-        else
-        {
-            std::cout << "Invalid console command!" << std::endl;
+            if(input_string == "stop")
+            {
+                console_is_running = false;
+            }
+            else
+            {
+                std::cout << "Invalid console command!" << std::endl;
+            }
         }
     }
     return 0;

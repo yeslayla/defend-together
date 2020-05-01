@@ -17,8 +17,13 @@ class GameMap
         std::string get_entity_dump(void);
         std::string spawn_entity(std::string,std::string,int,int);
         std::string move_entity(std::string,std::string,int,int);
+        int get_entity_pos_x(std::string,std::string);
+        int get_entity_pos_y(std::string,std::string);
         int get_size_x(void);
         int get_size_y(void);
+        bool entity_exists(std::string, std::string);
+        bool remove_entity(std::string, std::string);
+
     private:
         int ** map_data;
         int size_x;
@@ -66,12 +71,36 @@ std::string GameMap::move_entity(std::string entity_id, std::string entity_type,
     {
         if(entities[i].get_id() == entity_id && entities[i].get_type() == entity_type)
         {
-            if(map_data[entities[i].get_x() + x][entities[i].get_y() + y] % 2 == 1)
+            GameEntity* entity = &entities[i];
+            //if(map_data[entities[i].get_x() + x][entities[i].get_y() + y] % 2 == 1)
+            //{
+            if(entity->get_x() + x < 0)
             {
-                entities[i].set_x(entities[i].get_x() + x);
-                entities[i].set_y(entities[i].get_y() + y);
+                entity->set_x(0);
             }
-            return entities[i].get_dump();
+            else if(entity->get_x() + x >= this->get_size_x())
+            {
+                entity->set_x(this->get_size_x() - 1);
+            }
+            else
+            {
+                entity->set_x(entities[i].get_x() + x);
+            }
+            
+            if(entity->get_y() + y < 0)
+            {
+                entity->set_y(0);
+            }
+            else if(entity->get_y() + y >= this->get_size_y())
+            {
+                entity->set_y(this->get_size_y() - 1);
+            }
+            else
+            {
+                entity->set_y(entities[i].get_y() + y);
+            }
+
+            return entity->get_dump();
         }
     }
     return "";
@@ -135,6 +164,86 @@ int GameMap::get_size_x(void)
 int GameMap::get_size_y(void)
 {
     return size_y;
+}
+
+bool GameMap::entity_exists(std::string entity_id, std::string entity_type)
+{
+    for(int i = 0; i < entities.size(); i++)
+    {
+        GameEntity* entity = &entities[i];
+        if(entity->get_id() == entity_id)
+        {
+            if(entity->get_type() == entity_type)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool erase(std::vector<GameEntity> &v, GameEntity key)
+{
+    for(auto it = v.begin(); it != v.end();)
+    {
+        if (it->get_id() == key.get_id())
+        {
+            it = v.erase(it);
+            return true;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+    return false;
+}
+
+bool GameMap::remove_entity(std::string entity_id, std::string entity_type)
+{
+
+    for(int i = 0; i < entities.size(); i++)
+    {
+        if(entities[i].get_id() == entity_id && entities[i].get_type() == entity_type)
+        {
+            return erase(entities, entities[i]);
+        }
+    }
+
+    return false;
+}
+
+
+int GameMap::get_entity_pos_x(std::string entity_id, std::string entity_type)
+{
+    for(int i = 0; i < entities.size(); i++)
+    {
+        GameEntity* entity = &entities[i];
+        if(entity->get_id() == entity_id)
+        {
+            if(entity->get_type() == entity_type)
+            {
+                return entity->get_x();
+            }
+        }
+    }
+    return -1;
+}
+int GameMap::get_entity_pos_y(std::string entity_id, std::string entity_type)
+{
+    for(int i = 0; i < entities.size(); i++)
+    {
+        GameEntity* entity = &entities[i];
+        if(entity->get_id() == entity_id)
+        {
+            if(entity->get_type() == entity_type)
+            {
+                return entity->get_y();
+            }
+        }
+    }
+    return -1;
 }
 
 #endif

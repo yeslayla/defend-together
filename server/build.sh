@@ -8,3 +8,10 @@ if [ -f builds/server.out ]; then
 fi
 
 g++ main.cpp -o builds/server.out -lenet -lpthread
+
+if [ $? = 0 ]
+then
+    echo "Build successfully!"
+else
+    exit -1
+fi

@@ -7,3 +7,5 @@ ADD / /dt
 RUN cd /dt; /dt/build.sh
 
 CMD ["/dt/builds/server.out"]
+
+EXPOSE 7777/udp

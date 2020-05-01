@@ -97,11 +97,22 @@ int main (int argc, char ** argv)
 
                 case ENET_EVENT_TYPE_DISCONNECT:
                     std::cout << event.peer -> data << " disconnected." << std::endl;
-                    //Remove peer data on disconnect
 
-                    // DELETE ENTITY HERE
+                    //Clear username data and remove entity
+                    std::string username = usernames[event.peer -> incomingPeerID];
+                    if(username != "")
+                    {
+                        std::cout << "Removing '" << username << "'s player data!" << std::endl;
+                        gamemap.remove_entity(username,"player");
+                        usernames[event.peer -> incomingPeerID] = "";
 
-                    usernames[event.peer -> incomingPeerID] = "";
+                        std::string resp = "2|delete,player:" + username;
+                        const char* data = resp.c_str();
+                        ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+                        enet_host_broadcast(server, 0, packet);
+                    }
+                    
+                    //Open peer for new connection
                     event.peer -> data = NULL;
             }
         }
