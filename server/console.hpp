@@ -1,9 +1,9 @@
 #ifndef CONSOLE_HPP
 #define CONSOLE_HPP
 
-#include <stdio.h>
 #include <pthread.h>
 #include <iostream>
+#include <string>
 #include <cstring>
 
 
@@ -22,19 +22,24 @@ class ServerConsole
 
 void * console_logic(void *)
 {
-    printf("Started server console...\n");
+    std::cout << "Started server console..." << std::endl;
+
+    std::string input_string;
 
     while(console_is_running)
     {
-        char c [256];
-        fgets(c,sizeof(c), stdin);
-        if(c[0] == 'q')
+        if(!std::getline(std::cin, input_string))
+        {
+            std::cout << "Console I/O error!" << std::endl;
+        }
+
+        if(input_string == "stop")
         {
             console_is_running = false;
         }
         else
         {
-            printf("Invalid console command!\n");
+            std::cout << "Invalid console command!" << std::endl;
         }
     }
     return 0;
