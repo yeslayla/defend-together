@@ -1,0 +1,71 @@
+name: Push Docker Image
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - id: get_tag
+        name: Get Tag
+        env:
+          GITHUB_HEAD_REF: $${{ github.head_ref }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: |
+          TAG=$(jq --raw-output '.release.tag_name' $GITHUB_EVENT_PATH)
+          echo ::set-output name=TAG::$TAG
+      - name: Push Tag to Docker Hub
+        uses: opspresso/action-docker@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          BUILD_PATH: "server"
+          DOCKERFILE: "server/Dockerfile"
+          IMAGE_NAME: "josephbmanley/defend-together"
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG }}
+          LATEST: "false"
+      - name: Push Latest to Docker Hub
+        uses: opspresso/action-docker@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          BUILD_PATH: "server"
+          DOCKERFILE: "server/Dockerfile"
+          IMAGE_NAME: "josephbmanley/defend-together"
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG }}
+          LATEST: "true"
+      - name: Push Tag to GitHub Package
+        uses: opspresso/action-docker@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ github.actor }}
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY: "docker.pkg.github.com"
+          BUILD_PATH: "server"
+          DOCKERFILE: "server/Dockerfile"
+          IMAGE_NAME: "defend-together"
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG }}
+          LATEST: "false"
+      - name: Push Latest to GitHub Package
+        uses: opspresso/action-docker@master
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ github.actor }}
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY: "docker.pkg.github.com"
+          BUILD_PATH: "server"
+          DOCKERFILE: "server/Dockerfile"
+          IMAGE_NAME: "defend-together"
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG }}
+          LATEST: "true"
