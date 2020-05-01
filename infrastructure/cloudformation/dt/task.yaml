@@ -6,13 +6,23 @@ Parameters:
     Description: The AWS CloudWatch log group to output logs to.
     Default: "/ecs/dt"
 
+  environment:
+    Type: String
+    Description: Name of the environment to use in naming.
+    Default: production
+
+  DockerTag:
+    Description: Tag in DockerHub to deploy
+    Type: String
+    Default: "latest"
+
 Resources:
 
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 7
-      LogGroupName: !Ref LogGroupName
+      LogGroupName: !Sub "${LogGroupName}/${environment}"
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
@@ -20,7 +30,7 @@ Resources:
       ContainerDefinitions:
       - Name: defend-together
         Essential: 'true'
-        Image: "josephbmanley/defend-together:latest"
+        Image: !Sub "josephbmanley/defend-together:${DockerTag}"
         MemoryReservation: 800
         PortMappings:
         - HostPort: 0

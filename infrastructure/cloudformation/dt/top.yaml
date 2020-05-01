@@ -12,11 +12,15 @@ Parameters:
     Type: String
     Description: Name of the release name of the stack version to use.
     Default: production
-    AllowedValues: ['develop', 'production']
+    AllowedValues: ['develop', 'stage', 'production']
     ConstraintDescription: "Must be a possible release version."
   VpcId:
     Description: ID of the VPC
     Type: AWS::EC2::VPC::Id
+  DockerTag:
+    Description: Tag in DockerHub to deploy
+    Type: String
+    Default: "latest"
   
   #-----------------
   # Load Balancing 
@@ -95,7 +99,9 @@ Resources:
     Properties:
       TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/task.yaml'
       Parameters:
+        environment: !Ref environment
         LogGroupName: !Ref LogGroup
+        DockerTag: !Ref DockerTag
 
 
   EcsService:
