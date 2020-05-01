@@ -1,6 +1,8 @@
 extends Node
 
 const SERVER_HOST : String = "192.168.1.34"
+#const SERVER_HOST : String = "stage.dt.cloudsumu.com"
+#const SERVER_HOST : String = "dt-in-Publi-1S7VAU6QPEQHR-51ac8fd89ed249aa.elb.us-east-1.amazonaws.com"
 const SERVER_PORT : int = 7777
 
 signal disconnection

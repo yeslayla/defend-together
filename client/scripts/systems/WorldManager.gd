@@ -10,7 +10,10 @@ func _on_world_update():
 	var data = $"/root/NetworkManager".world_data.split('\n')
 	for tileUpdate in data:
 		if len(tileUpdate) > 3:
-			if ',' in tileUpdate:
+			if "delete," in tileUpdate:
+				var delete_data = tileUpdate.substr(len("delete,")).split(':')
+				delete_entity(delete_data[1],delete_data[0])
+			elif ',' in tileUpdate:
 				var tile_data = tileUpdate.split(',')
 				if ':' in tile_data[2]:
 					var pos : Vector2 = $Tiles.map_to_world(Vector2(int(tile_data[0]), int(tile_data[1])))
@@ -47,3 +50,9 @@ func update_entity(entity_id : String, pos : Vector2, type : String):
 			display_error("Trying to load entity of type: " + type + ", but failed.")
 	if entity:
 		entity.position = pos
+		
+func delete_entity(entity_id : String, type : String):
+	var entity : Node2D = get_node_or_null( str(type + "-" + entity_id))
+	if entity:
+		entity.queue_free()
+	

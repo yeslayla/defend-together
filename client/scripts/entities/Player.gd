@@ -11,9 +11,9 @@ func _process(delta):
 	
 	
 	if(Input.is_action_just_pressed("ui_up")):
-		movePos.y = movePos.y + 1
-	if(Input.is_action_just_pressed("ui_down")):
 		movePos.y = movePos.y - 1
+	if(Input.is_action_just_pressed("ui_down")):
+		movePos.y = movePos.y + 1
 	if(Input.is_action_just_pressed("ui_right")):
 		movePos.x = movePos.x + 1
 	if(Input.is_action_just_pressed("ui_left")):
