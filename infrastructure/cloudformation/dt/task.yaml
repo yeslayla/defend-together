@@ -31,7 +31,7 @@ Resources:
       - Name: defend-together
         Essential: 'true'
         Image: !Sub "josephbmanley/defend-together:${DockerTag}"
-        MemoryReservation: 800
+        MemoryReservation: 250
         PortMappings:
         - HostPort: 0
           ContainerPort: 7777
