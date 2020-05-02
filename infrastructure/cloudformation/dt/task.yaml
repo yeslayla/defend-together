@@ -36,6 +36,9 @@ Resources:
         - HostPort: 0
           ContainerPort: 7777
           Protocol: udp
+        - HostPort: 0
+          ContainerPort: 80
+          Protocol: tcp
         LogConfiguration:
           LogDriver: awslogs
           Options:
