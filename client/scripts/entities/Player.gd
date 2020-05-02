@@ -3,8 +3,12 @@ extends KinematicBody2D
 export var user : String = ""
 
 func _ready():
+	set_username("")
+
+func set_username(username):
+	print(username)
+	user = username
 	$Label.text = user
-	#$Label.text = $"/root/NetworkManager".username
 
 func _process(delta):
 	var movePos : Vector2 = Vector2(0,0)

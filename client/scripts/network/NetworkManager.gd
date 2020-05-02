@@ -34,7 +34,8 @@ func _init():
 	client.bind()
 
 func connect_to_server():
-	
+	if peer:
+		peer.disconnect_now()
 	server_address.set_host(server_host)
 	server_address.set_port(SERVER_PORT)
 	peer = client.host_connect(server_address)

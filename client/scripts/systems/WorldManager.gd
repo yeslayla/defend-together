@@ -50,6 +50,8 @@ func update_entity(entity_id : String, pos : Vector2, type : String):
 			display_error("Trying to load entity of type: " + type + ", but failed.")
 	if entity:
 		entity.position = pos
+		if entity.has_method("set_username"):
+			entity.set_username(entity_id)
 		
 func delete_entity(entity_id : String, type : String):
 	var entity : Node2D = get_node_or_null( str(type + "-" + entity_id))
