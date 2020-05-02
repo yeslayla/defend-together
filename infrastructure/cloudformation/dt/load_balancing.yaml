@@ -37,6 +37,8 @@ Resources:
   NlbTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
       Port: 7777
       Protocol: TCP_UDP
       TargetGroupAttributes:

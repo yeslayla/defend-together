@@ -14,10 +14,7 @@ RUN dnf install nginx -y
 
 COPY nginx.conf /etc/nginx/conf.d/nginx.conf
 
-RUN rm /etc/nginx/conf.d/default.conf
-
 RUN systemctl enable nginx.service
-
 
 EXPOSE 80/tcp
 EXPOSE 7777/udp
