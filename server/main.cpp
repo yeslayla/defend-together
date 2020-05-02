@@ -39,7 +39,7 @@ int main (int argc, char ** argv)
     address.port = SERVER_PORT;
 
 
-    const int CHANNEL_COUNT = 1;
+    const int CHANNEL_COUNT = 2;
     server = enet_host_create (&address, MAX_PLAYERS, CHANNEL_COUNT, 0, 0);
 
     if (server == NULL)
@@ -67,7 +67,8 @@ int main (int argc, char ** argv)
                     std::cout << "A packet of length " << event.packet -> dataLength << " containing "
                         << event.packet -> data << " was received from " << event.peer -> data << " on channel"
                         << event.channelID << std::endl;
-
+                    if (event.channelID == 0)
+                    {
                         char c [1];
                         c[0] = event.packet->data[0];
 
@@ -89,10 +90,24 @@ int main (int argc, char ** argv)
                             std::cout << "Invalid packet recieved!" <<std::endl;
                             break;
                         }
+                    }
+                    else if(event.channelID == 1)
+                    {
+                        int peer_id = event.peer -> incomingPeerID;
+                        if(usernames[peer_id] != "")
+                        {
+                            std::string chat_message((char*)event.packet->data);
+                            std::string resp = "<" + usernames[peer_id] + "> " + chat_message;
+                            const char* data = resp.c_str();
 
+                            std::cout << data << std::endl;
 
-                        //Destroy packet now that it has been used
-                        enet_packet_destroy (event.packet);
+                            ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+                            enet_host_broadcast(server, 1, packet);
+                        }
+                    }
+
+                    enet_packet_destroy (event.packet);
                 break;
 
                 case ENET_EVENT_TYPE_DISCONNECT:
