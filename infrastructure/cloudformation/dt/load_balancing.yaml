@@ -37,8 +37,10 @@ Resources:
   NlbTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
+      HealthCheckProtocol: TCP
+      HealthCheckPort: 80
       Port: 7777
-      Protocol: UDP
+      Protocol: TCP_UDP
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
@@ -55,7 +57,7 @@ Resources:
           TargetGroupArn: !Ref NlbTargetGroup
       LoadBalancerArn: !Ref PublicNLB
       Port: 7777
-      Protocol: UDP
+      Protocol: TCP_UDP
 
 
 Outputs:
