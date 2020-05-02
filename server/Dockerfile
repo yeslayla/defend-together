@@ -9,12 +9,4 @@ RUN cd /dt; /dt/build.sh
 
 CMD ["/dt/builds/server.out"]
 
-# Setup status endpoint
-RUN dnf install nginx -y
-
-COPY nginx.conf /etc/nginx/conf.d/nginx.conf
-
-RUN systemctl enable nginx.service
-
-EXPOSE 80/tcp
 EXPOSE 7777/udp
