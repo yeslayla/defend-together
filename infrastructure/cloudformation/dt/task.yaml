@@ -33,10 +33,10 @@ Resources:
         Image: !Sub "josephbmanley/defend-together:${DockerTag}"
         MemoryReservation: 250
         PortMappings:
-        - HostPort: 7777
+        - HostPort: 0
           ContainerPort: 7777
           Protocol: udp
-        - HostPort: 80
+        - HostPort: 0
           ContainerPort: 80
           Protocol: tcp
         LogConfiguration:
