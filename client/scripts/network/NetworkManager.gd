@@ -1,8 +1,7 @@
 extends Node
 
-const SERVER_HOST : String = "192.168.1.34"
-#const SERVER_HOST : String = "stage.dt.cloudsumu.com"
-#const SERVER_HOST : String = "dt-in-Publi-1S7VAU6QPEQHR-51ac8fd89ed249aa.elb.us-east-1.amazonaws.com"
+var server_host : String = "127.0.0.1"
+
 const SERVER_PORT : int = 7777
 
 signal disconnection
@@ -29,15 +28,15 @@ var connection_timer : Timer
 func _init():
 	server_address = GDNetAddress.new()
 	
-	server_address.set_host(SERVER_HOST)
-	server_address.set_port(SERVER_PORT)
-	
 	client = GDNetHost.new()
 	client.set_max_peers(1)
 	client.set_event_wait(250)
 	client.bind()
 
 func connect_to_server():
+	
+	server_address.set_host(server_host)
+	server_address.set_port(SERVER_PORT)
 	peer = client.host_connect(server_address)
 	if not connection_timer:
 		connection_timer = Timer.new()
