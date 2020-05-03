@@ -10,6 +10,7 @@ signal error_occured
 signal logged_in
 
 signal world_data_recieved
+signal chat_message_recieved
 
 var username : String = ""
 
@@ -29,6 +30,7 @@ func _init():
 	server_address = GDNetAddress.new()
 	
 	client = GDNetHost.new()
+	client.set_max_channels(2)
 	client.set_max_peers(1)
 	client.set_event_wait(250)
 	client.bind()
@@ -52,13 +54,13 @@ func timeout_check():
 	
 func request_world_map():
 	var request_packet : PoolByteArray = "2|".to_ascii()
-	packetQueue.append(request_packet)
+	send_packet(request_packet)
 	
 func connect_as_user(username : String):
 	connect_to_server()
 	var username_packet : PoolByteArray = ("1|" + username).to_ascii()
 	
-	packetQueue.append(username_packet)
+	send_packet(username_packet)
 
 func display_error(error = "Unknown error occured!"):
 	error_info = error
@@ -75,18 +77,22 @@ func process_events():
 		var event_type = event.get_event_type()
 		
 		if(event_type == GDNetEvent.RECEIVE):
-			var ascii_data : String = str(event.get_packet().get_string_from_ascii())
-			if len(ascii_data) > 0:
-				if ascii_data[0] == '1':
-					if ascii_data.substr(2,2) == "OK":
-						username = ascii_data.substr(4)
-						print("Logged in as: " + username)
-						emit_signal("logged_in")
-					else:
-						display_error("Username not accepted! Reason: " + ascii_data.substr(2))
-				elif ascii_data[0] == '2':
-					world_data = ascii_data.substr(2)
-					emit_signal("world_data_recieved")
+			if event.get_channel_id() == 0:
+				var ascii_data : String = str(event.get_packet().get_string_from_ascii())
+				if len(ascii_data) > 0:
+					if ascii_data[0] == '1':
+						if ascii_data.substr(2,2) == "OK":
+							username = ascii_data.substr(4)
+							print("Logged in as: " + username)
+							emit_signal("logged_in")
+						else:
+							display_error("Username not accepted! Reason: " + ascii_data.substr(2))
+					elif ascii_data[0] == '2':
+						world_data = ascii_data.substr(2)
+						emit_signal("world_data_recieved")
+			elif event.get_channel_id() == 1:
+				var chat_message : String = str(event.get_packet().get_string_from_ascii())
+				emit_signal("chat_message_recieved", chat_message)
 		elif(event_type == GDNetEvent.CONNECT):
 			print("Connected to server with hostname: " + server_address.get_host() + ":" + str(server_address.get_port()))
 			connected = true
@@ -96,16 +102,24 @@ func process_events():
 			connected = false
 			emit_signal("disconnection")
 			
+
+func send_chat_message(msg : String):
+	var pckt : PoolByteArray = (msg + '\n').to_ascii()
+	send_packet(pckt, 1)
+
+func send_packet(packet : PoolByteArray, channel = 0):
+	packetQueue.append({'channel':channel, 'packet' : packet})
+			
 func move_player(x,y):
 	var pckt : PoolByteArray = ("3|" + str(x) + "," + str(y)).to_ascii()
 	
-	packetQueue.append(pckt)
+	send_packet(pckt)
 	
 func _process(delta):
 	process_events()
 	
 	if len(packetQueue) > 0 and connected:
-		peer.send_packet(packetQueue[0], 0, GDNetMessage.RELIABLE)
+		peer.send_packet(packetQueue[0]['packet'], packetQueue[0]['channel'], GDNetMessage.RELIABLE)
 		packetQueue.remove(0)
 		
 	
