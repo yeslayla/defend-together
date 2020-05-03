@@ -90,13 +90,17 @@ int main (int argc, char ** argv)
                             std::cout << "Invalid packet recieved!" <<std::endl;
                             break;
                         }
+                        enet_packet_destroy (event.packet);
                     }
                     else if(event.channelID == 1)
                     {
                         int peer_id = event.peer -> incomingPeerID;
                         if(usernames[peer_id] != "")
                         {
-                            std::string chat_message((char*)event.packet->data);
+                            //Parse input string
+                            std::stringstream ss((char*)event.packet->data);
+                            std::string chat_message;
+                            std::getline(ss, chat_message, '\n');
                             std::string resp = "<" + usernames[peer_id] + "> " + chat_message;
                             const char* data = resp.c_str();
 
@@ -105,9 +109,10 @@ int main (int argc, char ** argv)
                             ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_host_broadcast(server, 1, packet);
                         }
+                        enet_packet_destroy (event.packet);
                     }
 
-                    enet_packet_destroy (event.packet);
+                    
                 break;
 
                 case ENET_EVENT_TYPE_DISCONNECT:
