@@ -29,14 +29,23 @@ jobs:
           projectDir: client
           debugMode: 'true'
           package: 'true'
+      - id: get_tag
+        name: Get Tag
+        env:
+          GITHUB_HEAD_REF: $${{ github.head_ref }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: |
+          TAG=$(jq --raw-output '.release.tag_name' $GITHUB_EVENT_PATH)
+          echo ::set-output name=TAG::$TAG
       - name: Push to Itch
         uses: josephbmanley/butler-publish-itchio-action@v1.0.1
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
           CHANNEL: ${{ matrix.platform }}
-          ITCH_GAME: example-project
-          ITCH_USER: username
+          ITCH_GAME: defend-together
+          ITCH_USER: josephbmanley
           PACKAGE: ${{ github.workspace }}/${{ steps.build.outputs.build }}
+          VERSION: ${{ steps.get_tag.outputs.TAG }}
   docker:
     runs-on: ubuntu-latest
     steps:
