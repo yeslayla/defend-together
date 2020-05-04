@@ -107,19 +107,19 @@ func send_chat_message(msg : String):
 	var pckt : PoolByteArray = (msg + '\n').to_ascii()
 	send_packet(pckt, 1)
 
-func send_packet(packet : PoolByteArray, channel = 0):
-	packetQueue.append({'channel':channel, 'packet' : packet})
+func send_packet(packet : PoolByteArray, channel = 0, pck_type = GDNetMessage.RELIABLE):
+	packetQueue.append({'channel':channel, 'packet' : packet, 'type' : pck_type})
 			
 func move_player(x,y):
 	var pckt : PoolByteArray = ("3|" + str(x) + "," + str(y)).to_ascii()
 	
-	send_packet(pckt)
+	send_packet(pckt, 0, GDNetMessage.SEQUENCED)
 	
 func _process(delta):
 	process_events()
 	
 	if len(packetQueue) > 0 and connected:
-		peer.send_packet(packetQueue[0]['packet'], packetQueue[0]['channel'], GDNetMessage.RELIABLE)
+		peer.send_packet(packetQueue[0]['packet'], packetQueue[0]['channel'], packetQueue[0]['type'])
 		packetQueue.remove(0)
 		
 	
