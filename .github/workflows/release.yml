@@ -6,6 +6,37 @@ on:
       - created
 
 jobs:
+  godot:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download Export Template
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          mkdir -p client/templates
+          wget http://godot-enet.cloudsumu.com.s3-website-us-east-1.amazonaws.com/export-templates/debug/$PLATFORM -O client/templates/$PLATFORM
+      - name: Build
+        id: build
+        uses: josephbmanley/build-godot-action@v1.4.0
+        with:
+          name: defend-together
+          preset: ${{ matrix.platform }}
+          projectDir: client
+          debugMode: 'true'
+          package: 'true'
+      - name: Push to Itch
+        uses: josephbmanley/butler-publish-itchio-action@v1.0.1
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: ${{ matrix.platform }}
+          ITCH_GAME: example-project
+          ITCH_USER: username
+          PACKAGE: ${{ github.workspace }}/${{ steps.build.outputs.build }}
   docker:
     runs-on: ubuntu-latest
     steps:
