@@ -20,15 +20,20 @@ jobs:
         run: |
           mkdir -p client/templates
           wget http://godot-enet.cloudsumu.com.s3-website-us-east-1.amazonaws.com/export-templates/release/$PLATFORM -O client/templates/$PLATFORM
+      - name: Configure
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          if [ "$PLATFORM" = "win32" ] || [ "$PLATFORM" = "win64" ] ; then
+            echo "::set-env name=EXPORT_SUFFIX::.exe"
+          fi
       - name: Build
         id: build
         uses: josephbmanley/build-godot-action@v1.4.0
         with:
-          name: defend-together
+          name: defend-together${{ env.EXPORT_SUFFIX }}
           preset: ${{ matrix.platform }}
           projectDir: client
-          debugMode: 'true'
-          package: 'true'
       - id: get_tag
         name: Get Tag
         env:
