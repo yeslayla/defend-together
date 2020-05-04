@@ -76,7 +76,7 @@ void Authenticate(ENetEvent* event)
         usernames[peer_id] = username;
 
         //Spawn entity
-        std::string spawn_data = gamemap.spawn_entity(usernames[peer_id], "player", 127, 127);
+        std::string spawn_data = gamemap.spawn_entity(usernames[peer_id], "player", 128, 129);
 
         //Tell peers about new player
         data = ("2|" + spawn_data).c_str();
