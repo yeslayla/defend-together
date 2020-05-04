@@ -5,9 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-
-
-bool console_is_running = false;
+#include "gameserver.hpp"
 
 class ServerConsole
 {
@@ -26,13 +24,13 @@ void * console_logic(void *)
 
     std::string input_string;
 
-    while(console_is_running)
+    while(game_is_running)
     {
         if(std::getline(std::cin, input_string))
         {
             if(input_string == "stop")
             {
-                console_is_running = false;
+                game_is_running = false;
             }
             else
             {
@@ -46,7 +44,7 @@ void * console_logic(void *)
 ServerConsole::ServerConsole(void)
 {
     //Intialized values
-    console_is_running = true;
+    game_is_running = true;
 
     thread = pthread_t();
 
@@ -64,7 +62,7 @@ void ServerConsole::stop(void)
 
 bool ServerConsole::is_running(void)
 {
-    return console_is_running;
+    return game_is_running;
 }
 
 #endif
