@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [linux]
+        platform: [linux, win32, win64]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
           PLATFORM: ${{ matrix.platform }}
         run: |
           mkdir -p client/templates
-          wget http://godot-enet.cloudsumu.com.s3-website-us-east-1.amazonaws.com/export-templates/debug/$PLATFORM -O client/templates/$PLATFORM
+          wget http://godot-enet.cloudsumu.com.s3-website-us-east-1.amazonaws.com/export-templates/release/$PLATFORM -O client/templates/$PLATFORM
       - name: Build
         id: build
         uses: josephbmanley/build-godot-action@v1.4.0
