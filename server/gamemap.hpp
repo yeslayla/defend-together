@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 #include "gameentity.hpp"
 
@@ -15,14 +16,17 @@ class GameMap
         void set_tile(int,int,int);
         std::string get_tile_dump(void);
         std::string get_entity_dump(void);
-        std::string spawn_entity(std::string,std::string,int,int);
-        std::string move_entity(std::string,std::string,int,int);
+        std::string spawn_entity(std::string,std::string,float,float);
+        std::string move_entity(std::string,std::string,float,float);
+        void set_entity_velocity(std::string,std::string,float,float);
+        std::string move_enitity_relatively(std::string,std::string,float,float);
         int get_entity_pos_x(std::string,std::string);
         int get_entity_pos_y(std::string,std::string);
         int get_size_x(void);
         int get_size_y(void);
         bool entity_exists(std::string, std::string);
         bool remove_entity(std::string, std::string);
+        std::string world_tick(void);
 
     private:
         int ** map_data;
@@ -58,14 +62,26 @@ GameMap::GameMap(int x, int y)
 
 }
 
-std::string GameMap::spawn_entity(std::string entity_id, std::string entity_type, int x = 0, int y = 0)
+std::string GameMap::spawn_entity(std::string entity_id, std::string entity_type, float x = 0, float y = 0)
 {
     GameEntity entity = GameEntity(entity_id, entity_type, x, y);
     entities.push_back(entity);
     return entity.get_dump();
 }
 
-std::string GameMap::move_entity(std::string entity_id, std::string entity_type, int x = 0, int y = 0)
+std::string GameMap::move_enitity_relatively(std::string entity_id, std::string entity_type, float x = 0, float y = 0)
+{
+    for(int i = 0; i < entities.size(); i++)
+    {
+        if(entities[i].get_id() == entity_id && entities[i].get_type() == entity_type)
+        {
+            return move_entity(entity_id, entity_type, x - entities[i].get_x(), y - entities[i].get_y());
+        }
+    }
+    return "";
+}
+
+std::string GameMap::move_entity(std::string entity_id, std::string entity_type, float x = 0, float y = 0)
 {
     for(int i = 0; i < entities.size(); i++)
     {
@@ -106,6 +122,18 @@ std::string GameMap::move_entity(std::string entity_id, std::string entity_type,
     return "";
 }
 
+void GameMap::set_entity_velocity(std::string entity_id, std::string entity_type, float x = 0, float y = 0)
+{
+    for(int i = 0; i < entities.size(); i++)
+    {
+        if(entities[i].get_id() == entity_id && entities[i].get_type() == entity_type)
+        {
+            GameEntity* entity = &entities[i];
+            entity->set_velocity(x,y);   
+        }
+    }
+}
+
 bool GameMap::valid_x_y(int x, int y)
 {
     if(x < size_x && x >= 0)
@@ -116,6 +144,23 @@ bool GameMap::valid_x_y(int x, int y)
         }
     }
     return false;
+}
+
+std::string GameMap::world_tick(void)
+{
+    std::string dump = "";
+    for(int i = 0; i < entities.size(); i++)
+    {
+        if(entities[i].movement_tick())
+        {
+            dump += entities[i].get_dump();
+        }
+    }
+    if(dump != "")
+    {
+    std::cout << dump << std::endl;
+    }
+    return dump;
 }
 
 int GameMap::get_tile(int x, int y)
@@ -213,7 +258,6 @@ bool GameMap::remove_entity(std::string entity_id, std::string entity_type)
 
     return false;
 }
-
 
 int GameMap::get_entity_pos_x(std::string entity_id, std::string entity_type)
 {

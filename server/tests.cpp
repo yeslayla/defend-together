@@ -39,12 +39,12 @@ TEST(EntityTest, GetBasicDump)
 {
     GameEntity entity = CreateTestEntity();
     //Test intial location (0,0)
-    EXPECT_EQ(entity.get_dump(), std::string("0,0," + TEST_ENTITY_TYPE + ":" + TEST_ENTITY_ID + "\n"));
+    EXPECT_EQ(entity.get_dump(), std::string("0.000000,0.000000," + TEST_ENTITY_TYPE + ":" + TEST_ENTITY_ID + "\n"));
 
     //Test non-intial location (1,2)
     entity.set_x(1);
     entity.set_y(2);
-    EXPECT_EQ(entity.get_dump(), std::string("1,2," + TEST_ENTITY_TYPE + ":" + TEST_ENTITY_ID + "\n"));
+    EXPECT_EQ(entity.get_dump(), std::string("1.000000,2.000000," + TEST_ENTITY_TYPE + ":" + TEST_ENTITY_ID + "\n"));
 }
 
 //Test GameMap Object

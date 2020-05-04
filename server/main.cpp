@@ -42,6 +42,9 @@ int main (int argc, char ** argv)
         return 1;
     }
 
+    //Start ticker
+    gameserver::StartTicker();
+
     //Run main game server loop
     std::cout << "Awaiting connections..." << std::endl;
     while(game_is_running)

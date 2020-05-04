@@ -7,6 +7,9 @@
 #include <sstream>
 #include <cstring>
 
+#include <unistd.h>
+#include <pthread.h>
+
 #include "gamemap.hpp"
 using namespace std;
 
@@ -42,8 +45,8 @@ namespace gameserver
     {
         int peer_id = event->peer -> incomingPeerID;
 
-        int move_x = 0;
-        int move_y = 0;
+        float move_x = 0;
+        float move_y = 0;
 
         //Remove id marker from packet data
         std::string data_input((char*)event->packet->data);
@@ -53,14 +56,14 @@ namespace gameserver
         std::stringstream ss(data_input);
         std::string tempString;
         std::getline(ss, tempString, ',');
-        move_x = std::stoi(tempString);
+        move_x = std::stof(tempString);
         std::getline(ss, tempString, '\n');
-        move_y = std::stoi(tempString);
+        move_y = std::stof(tempString);
 
         //Update player position
-        std::string resp = "2|" + gamemap.move_entity(usernames[peer_id], "player", move_x, move_y);
+        std::string resp = "2|" + gamemap.move_enitity_relatively(usernames[peer_id], "player", move_x, move_y);
         const char* data = resp.c_str();
-        ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+        ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, 0);
         enet_host_broadcast(server, 0, packet);
     }
 
@@ -173,6 +176,26 @@ namespace gameserver
             std::cout << "Invalid packet recieved!" <<std::endl;
             break;
         }
+    }
+
+    pthread_t ticker_thread;
+
+    void * GameTicker(void *)
+    {
+        while(game_is_running)
+        {
+            usleep(50000);
+            std::string data_string = "2|"+gamemap.world_tick();
+            const char* data = data_string.c_str();
+            ENetPacket* packet = enet_packet_create(data, strlen(data), ENET_PACKET_FLAG_UNSEQUENCED);
+            enet_host_broadcast(server, 0, packet);
+        }
+        return 0;
+    }
+
+    void StartTicker()
+    {
+        pthread_create(&ticker_thread, NULL, GameTicker, NULL);
     }
 }
 
