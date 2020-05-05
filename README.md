@@ -18,7 +18,7 @@ View nested `ReadMe.md` files:
 
 This project highlights the following:
 
-- Continous Intergration & Continous Deployment
+- Continuous Integration & Continuous Deployment
 
 - UDP Server Networking
 
