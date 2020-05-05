@@ -23,6 +23,7 @@ var packetQueue = []
 var error_info = ""
 var world_data : String = ""
 
+var last_move_time = null
 
 var connection_timer : Timer
 
@@ -111,9 +112,12 @@ func send_packet(packet : PoolByteArray, channel = 0, pck_type = GDNetMessage.RE
 	packetQueue.append({'channel':channel, 'packet' : packet, 'type' : pck_type})
 			
 func move_player(x,y):
-	var pckt : PoolByteArray = ("3|" + str(x) + "," + str(y)).to_ascii()
+	if last_move_time == null || OS.get_ticks_msec() - last_move_time > 50:
+
+		var pckt : PoolByteArray = ("3|" + str(x) + "," + str(y)).to_ascii()
 	
-	send_packet(pckt, 0, GDNetMessage.SEQUENCED)
+		send_packet(pckt, 0, GDNetMessage.SEQUENCED)
+		last_move_time = OS.get_ticks_msec()
 	
 func _process(delta):
 	process_events()

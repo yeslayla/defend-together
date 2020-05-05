@@ -32,9 +32,25 @@ void * console_logic(void *)
             {
                 game_is_running = false;
             }
+            else if (input_string.length() > 2 && input_string.substr(0,3) == "say")
+            {
+                if(input_string.length() > 4)
+                {
+                    gameserver::BroadcastMessage("Server: " + input_string.substr(4));
+                }
+                else
+                {
+                    std::cout << "Must pass a valid message!" << std::endl;
+                }
+                
+            }
             else
             {
-                std::cout << "Invalid console command!" << std::endl;
+                std::cout << std::endl
+                << "Invalid console command!" << std::endl
+                << "Valid commands are:" << std::endl
+                << "stop" << std::endl
+                << "say [message]" << std::endl;
             }
         }
     }

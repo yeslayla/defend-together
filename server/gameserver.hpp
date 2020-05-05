@@ -121,6 +121,37 @@ namespace gameserver
         }
     }
 
+    void SendPlayerMessage(ENetPeer* peer, std::string message)
+    {
+        const char* data = message.c_str();
+
+        ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(peer, 1, packet);
+    }
+
+    bool SendPlayerMessage(std::string username, std::string message)
+    {
+        for(int i = 0; i < MAX_PLAYERS; i++)
+        {
+            if(usernames[i] == username)
+            {
+                SendPlayerMessage(&(server->peers[i]), message);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void BroadcastMessage(std::string message)
+    {
+        const char* data = message.c_str();
+
+        std::cout << data << std::endl;
+
+        ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_host_broadcast(server, 1, packet);
+    }
+
     void ProcessChatMessage(ENetEvent* event)
     {
         int peer_id = event->peer -> incomingPeerID;
@@ -131,12 +162,8 @@ namespace gameserver
             std::string chat_message;
             std::getline(ss, chat_message, '\n');
             std::string resp = "<" + usernames[peer_id] + "> " + chat_message;
-            const char* data = resp.c_str();
+            BroadcastMessage(resp);
 
-            std::cout << data << std::endl;
-
-            ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
-            enet_host_broadcast(server, 1, packet);
         }
     }
     
@@ -184,7 +211,7 @@ namespace gameserver
     {
         while(game_is_running)
         {
-            usleep(50000);
+            usleep(50000*3);
             std::string data_string = "2|"+gamemap.world_tick();
             const char* data = data_string.c_str();
             ENetPacket* packet = enet_packet_create(data, strlen(data), ENET_PACKET_FLAG_UNSEQUENCED);
