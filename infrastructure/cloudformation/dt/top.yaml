@@ -68,6 +68,19 @@ Resources:
         SubDomain: !Ref SubDomain
         DtDNS: !GetAtt LoadBalancing.Outputs.NlbDnsName
 
+  #---------
+  # Caching
+  #---------
+  RedisCache:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/redis/top.yaml'
+      Parameters:
+        Environment: !Ref environment
+        VpcId: !Ref VpcId
+        SubnetIds: !Join [",", !Split [" ", !Ref PublicSubnets]]
+        Project: "DT"
+
   #-----------------
   # Load Balancing 
   #-----------------

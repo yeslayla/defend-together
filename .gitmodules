@@ -1,3 +1,6 @@
 [submodule "infrastructure/cloudformation/cluster"]
 	path = infrastructure/cloudformation/cluster
 	url = git@github.com:josephbmanley/aws-cluster-stack.git
+[submodule "infrastructure/cloudformation/redis"]
+	path = infrastructure/cloudformation/redis
+	url = git@github.com:josephbmanley/aws-redis-cluster.git
