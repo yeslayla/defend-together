@@ -16,6 +16,10 @@ Parameters:
     Type: String
     Default: "latest"
 
+  RedisHostname:
+    Description: Redis host to connect to
+    Type: String
+
 Resources:
 
   LogGroup:
@@ -36,6 +40,9 @@ Resources:
         - HostPort: 7778
           ContainerPort: 7778
           Protocol: tcp
+        Environment:
+        - Name: REDIS_HOSTNAME
+          Value: !Ref RedisHostname
         LogConfiguration:
           LogDriver: awslogs
           Options:
