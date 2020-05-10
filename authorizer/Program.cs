@@ -1,13 +1,24 @@
 ﻿using System;
+using System.Threading;
 
 namespace authorizer
 {
     class Program
     {
         static AuthServer server;
+        static Redis redis;
         static void Main(string[] args)
         {
-            server = new AuthServer();
+            redis = new Redis(Environment.GetEnvironmentVariable("REDIS_HOSTNAME"));
+
+            redis.SetTest();
+
+            Thread.Sleep(100);
+
+            redis.GetTest();
+
+
+            /* server = new AuthServer();
 
             server.Start();
 
@@ -17,7 +28,7 @@ namespace authorizer
                 input = Console.ReadLine();
             }
             while(input != "stop");
-            server.Stop();
+            server.Stop(); */
         }
     }
 }
