@@ -104,13 +104,15 @@ Resources:
         SubnetIds: !Join [",", !Split [" ", !Ref PublicSubnets]]
         Project: "DT"
 
-  #-------------------
-  # ECS Task & Service
-  #-------------------
+  #----------------------
+  # ECS Tasks & Services
+  #----------------------
+
+  # Game Server
   TaskDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/task.yaml'
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/sever_task.yaml'
       Parameters:
         environment: !Ref environment
         LogGroupName: !Ref LogGroup
@@ -124,7 +126,21 @@ Resources:
       Cluster: !GetAtt EcsCluster.Outputs.Cluster
       DesiredCount: 1
       TaskDefinition: !GetAtt TaskDefinition.Outputs.TaskArn
-      LoadBalancers:  
-        - ContainerName: "defend-together"
-          ContainerPort: 7777
-          TargetGroupArn: !GetAtt LoadBalancing.Outputs.TargetGroup
+
+  # Auth Server
+  AuthTaskDefinition:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/auth_task.yaml'
+      Parameters:
+        environment: !Ref environment
+        LogGroupName: !Ref LogGroup
+        DockerTag: !Ref DockerTag
+        RedisHostname: !GetAtt RedisCache.Outputs.Endpoint
+  
+  AuthService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !GetAtt EcsCluster.Outputs.Cluster
+      DesiredCount: 1
+      TaskDefinition: !GetAtt AuthTaskDefinition.Outputs.TaskArn
