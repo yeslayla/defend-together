@@ -44,7 +44,7 @@ Resources:
 
   TaskListManagerLambda:
     Type: AWS::Lambda::Function
-    Runtime: python3.7
+    Runtime: python3.6
     Code:
       S3Bucket: sumu-stacks
       S3Key: !Sub "dt/${release}/lambda/task_queue_manager.zip"
