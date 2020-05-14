@@ -90,7 +90,7 @@ Resources:
         release: !Ref release
         TaskManagerRole: !GetAtt IAM.Outputs.DefaultRole
         VpcId: !Ref VpcId
-        SubnetIds: !Ref PublicSubnets
+        SubnetIds: !Join [",", !Split [" ", !Ref PublicSubnets]]
 
   #------------
   # CloudWatch

@@ -49,6 +49,7 @@ Resources:
   TaskListManagerLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Handler: lambda_function.lambda_handler
       Runtime: python3.7
       Code:
         S3Bucket: sumu-stacks
