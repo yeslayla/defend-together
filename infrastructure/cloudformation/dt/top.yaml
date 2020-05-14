@@ -85,7 +85,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/lambda.yaml'
-      Paramters:
+      Parameters:
         environment: !Ref environment
         TaskManagerRole: !GetAtt IAM.Outputs.DefaultRole
         VpcId: !Ref VpcId
@@ -98,7 +98,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/cloudwatch.yaml'
-      Paramters:
+      Parameters:
         environment: !Ref environment
         Cluster: !GetAtt EcsCluster.Outputs.Cluster
         LambdaArn: !GetAtt LambdaFunctions.Outputs.TaskListManager
