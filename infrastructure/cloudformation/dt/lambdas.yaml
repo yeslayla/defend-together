@@ -8,6 +8,10 @@ Parameters:
     Type: String
     Description: Name of the environment
     Default: production
+  release:
+    Type: String
+    Description: Name of the release name of the stack version to use.
+    Default: production
 
   #----------------
   # IAM Information
@@ -53,7 +57,7 @@ Resources:
       Description: Adds and removes tasks from a redis list
       MemorySize: 128
       Timeout: 10
-      Role: !Ref QueueManagerRole
+      Role: !Ref TaskManagerRole
       VpcConfig:
         SecurityGroupIds:
         - !Ref TaskListSecurityGroup
