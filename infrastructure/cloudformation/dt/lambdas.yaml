@@ -44,19 +44,20 @@ Resources:
 
   TaskListManagerLambda:
     Type: AWS::Lambda::Function
-    Runtime: python3.6
-    Code:
-      S3Bucket: sumu-stacks
-      S3Key: !Sub "dt/${release}/lambda/task_queue_manager.zip"
-    FunctionName: !Sub "FnQueueManager-DT-${environment}"
-    Description: Adds and removes tasks from a redis list
-    MemorySize: 128
-    Timeout: 10
-    Role: !Ref QueueManagerRole
-    VpcConfig:
-      SecurityGroupIds:
-      - !Ref TaskListSecurityGroup
-      SubnetIds: !Ref SubnetIds
+    Properties:
+      Runtime: python3.7
+      Code:
+        S3Bucket: sumu-stacks
+        S3Key: !Sub "dt/${release}/lambda/task_queue_manager.zip"
+      FunctionName: !Sub "FnQueueManager-DT-${environment}"
+      Description: Adds and removes tasks from a redis list
+      MemorySize: 128
+      Timeout: 10
+      Role: !Ref QueueManagerRole
+      VpcConfig:
+        SecurityGroupIds:
+        - !Ref TaskListSecurityGroup
+        SubnetIds: !Ref SubnetIds
 
 Outputs:
   TaskListManager:
