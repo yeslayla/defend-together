@@ -66,5 +66,5 @@ Resources:
 
 Outputs:
   TaskListManager:
-    Value: !Ref TaskListManagerLambda
+    Value: !GetAtt TaskListManagerLambda.Arn
     Description: Function that adds and removes tasks from a redis list
