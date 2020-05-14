@@ -84,7 +84,7 @@ Resources:
   LambdaFunctions:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/lambda.yaml'
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/lambdas.yaml'
       Parameters:
         environment: !Ref environment
         TaskManagerRole: !GetAtt IAM.Outputs.DefaultRole

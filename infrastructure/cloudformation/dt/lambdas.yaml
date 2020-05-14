@@ -49,7 +49,7 @@ Resources:
       S3Bucket: sumu-stacks
       S3Key: !Sub "dt/${release}/lambda/task_queue_manager.zip"
     FunctionName: !Sub "FnQueueManager-DT-${environment}"
-    Description:
+    Description: Adds and removes tasks from a redis list
     MemorySize: 128
     Timeout: 10
     Role: !Ref QueueManagerRole
