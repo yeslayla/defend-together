@@ -37,4 +37,4 @@ Resources:
 Outputs:
   DefaultRole:
     Description: Default lambda role with logging policy
-    Value: !Ref DefaultLambdaRole
+    Value: !GetAtt DefaultLambdaRole.Arn
