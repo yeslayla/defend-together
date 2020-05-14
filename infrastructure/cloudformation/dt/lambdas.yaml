@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: DT Lambdas stack
+Parameters:
+  #------------------------
+  # Deployment Information
+  #------------------------
+  environment:
+    Type: String
+    Description: Name of the environment
+    Default: production
+
+  #----------------
+  # IAM Information
+  #----------------
+  TaskManagerRole:
+    Type: String
+    Description: IAM role assumed by Task Manager Lambda
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The id of the VPC the cluster will be in
+    ConstraintDescription: VPC Id must begin with 'vpc-'
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Comma seperated list of subnets for ECS instances to run in
+
+Resources:
+
+  TaskListSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: TaskListManagerLambda Allowed Ports
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '0'
+        ToPort: '65535'
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: '0'
+        ToPort: '65535'
+        CidrIp: 0.0.0.0/0
+
+
+  TaskListManagerLambda:
+    Type: AWS::Lambda::Function
+    Runtime: python3.7
+    Code:
+      S3Bucket: sumu-stacks
+      S3Key: !Sub "dt/${release}/lambda/task_queue_manager.zip"
+    FunctionName: !Sub "FnQueueManager-DT-${environment}"
+    Description:
+    MemorySize: 128
+    Timeout: 10
+    Role: !Ref QueueManagerRole
+    VpcConfig:
+      SecurityGroupIds:
+      - !Ref TaskListSecurityGroup
+      SubnetIds: !Ref SubnetIds
+
+Outputs:
+  TaskListManager:
+    Value: !Ref TaskListManagerLambda
+    Description: Function that adds and removes tasks from a redis list

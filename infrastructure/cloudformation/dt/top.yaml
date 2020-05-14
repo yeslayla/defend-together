@@ -68,6 +68,41 @@ Resources:
         SubDomain: !Ref SubDomain
         DtDNS: !GetAtt LoadBalancing.Outputs.NlbDnsName
 
+  #-----
+  # IAM
+  #-----
+  IAM:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/iam.yaml'
+      Parameters:
+        environment: !Ref environment
+
+  #--------
+  # Lambda
+  #--------
+  LambdaFunctions:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/lambda.yaml'
+      Paramters:
+        environment: !Ref environment
+        TaskManagerRole: !GetAtt IAM.Outputs.DefaultRole
+        VpcId: !Ref VpcId
+        SubnetIds: !Ref PublicSubnets
+
+  #------------
+  # CloudWatch
+  #------------
+  CloudWatchRules:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/cloudwatch.yaml'
+      Paramters:
+        environment: !Ref environment
+        Cluster: !GetAtt EcsCluster.Outputs.Cluster
+        LambdaArn: !GetAtt LambdaFunctions.Outputs.TaskListManager
+
   #---------
   # Caching
   #---------
