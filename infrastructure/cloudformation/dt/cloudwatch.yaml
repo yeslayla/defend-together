@@ -27,7 +27,6 @@ Resources:
 
   CloudWatchLambdaPermission:
     Type: AWS::Lambda::Permission
-    Condition: Automated
     Properties:
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
