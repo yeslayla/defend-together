@@ -25,6 +25,15 @@ Parameters:
 
 Resources:
 
+  CloudWatchLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Condition: Automated
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt TaskListRule.Arn
+      FunctionName: !Ref LambdaArn
+
   TaskListRule:
     Type: AWS::Events::Rule                                                                       
     Properties:
