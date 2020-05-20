@@ -61,7 +61,7 @@ Resources:
     Condition: CreateDns
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/dns.yaml'
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/dns.yaml'
       Parameters:
         environment: !Ref environment
         Domain: !Ref Domain
@@ -74,7 +74,7 @@ Resources:
   LoadBalancing:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/load_balancing.yaml'
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/load_balancing.yaml'
       Parameters:
         environment: !Ref environment
         release: !Ref release
@@ -84,7 +84,7 @@ Resources:
   EcsCluster:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/cluster/top.yaml'
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/cluster/top.yaml'
       Parameters:
         Environment: !Ref environment
         VpcId: !Ref VpcId
@@ -97,7 +97,7 @@ Resources:
   TaskDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/task.yaml'
+      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/task.yaml'
       Parameters:
         environment: !Ref environment
         LogGroupName: !Ref LogGroup
