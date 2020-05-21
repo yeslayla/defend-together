@@ -101,7 +101,7 @@ Resources:
       TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/cloudwatch.yaml'
       Parameters:
         environment: !Ref environment
-        Cluster: !GetAtt EcsCluster.Outputs.Cluster
+        Cluster: !GetAtt EcsCluster.Outputs.ClusterArn
         LambdaArn: !GetAtt LambdaFunctions.Outputs.TaskListManager
 
   #---------

@@ -24,6 +24,7 @@ config/icon="res://icon.png"
 MusicManager="*res://nodes/MusicManager.tscn"
 NetworkManager="*res://nodes/NetworkManager.tscn"
 ImportantEntities="*res://scripts/singletons/ImportantEntities.gd"
+Authorizer="*res://scripts/network/Authorizer.gd"
 
 [input]
 

@@ -4,7 +4,7 @@ using StackExchange.Redis;
 class Redis
 {
     private ConnectionMultiplexer muxer;
-    private IDatabase conn;
+    public IDatabase conn;
     private string hostname;
     private int port;
     public Redis(string host = "127.0.0.1", int p = 6379)
@@ -23,18 +23,6 @@ class Redis
         muxer = ConnectionMultiplexer.Connect(hostname + ":" + port.ToString());
         conn = muxer.GetDatabase();
         Console.WriteLine("Connected to redis server!");
-    }
-
-    public void SetTest()
-    {
-        string test_val = "Potato";
-        conn.StringSet("test_val", test_val);
-        Console.WriteLine("Set value to: " + test_val);
-    }
-
-    public void GetTest()
-    {
-        Console.WriteLine("Value is: " + conn.StringGet("test_val"));
     }
 
     ~Redis()
