@@ -19,8 +19,8 @@ jobs:
         args: --follow-symlinks --delete
       env:
         SOURCE_DIR: infrastructure/cloudformation
-        AWS_REGION: "us-east-1"
-        DEST_DIR: dt/develop/cloudformation
-        AWS_S3_BUCKET: sumu-stacks
+        AWS_REGION: "us-east-2"
+        DEST_DIR: develop/cloudformation
+        AWS_S3_BUCKET: dt-deployment-bucket
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
