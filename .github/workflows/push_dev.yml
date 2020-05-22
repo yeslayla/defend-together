@@ -38,7 +38,7 @@ jobs:
           BUILD_PATH: "authorizer"
           DOCKERFILE: "authorizer/Dockerfile"
           IMAGE_NAME: "authorizer"
-          TAG_NAME: dev:${{ github.actor }}
+          TAG_NAME: dev-${{ github.actor }}
           LATEST: "false"
   cloudformation:
     runs-on: ubuntu-latest
