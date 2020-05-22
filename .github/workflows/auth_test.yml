@@ -20,6 +20,10 @@ jobs:
         working-directory: authorizer
         run: |
           dotnet add package StackExchange.Redis --version 2.1.39 --source https://www.myget.org/F/stackoverflow/api/v3/index.json
+
+          # AWS SDK
+          dotnet add package AWSSDK.Core --version 3.5.0-beta
+          dotnet add package AWSSDK.ECS --version 3.5.0-beta
       - name: Build
         working-directory: authorizer
         run: |

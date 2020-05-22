@@ -30,6 +30,22 @@ class AuthServer
         server = new TcpListener(address, port);
         ecs = new AmazonECSClient();
     }
+
+    private Amazon.ECS.Model.Task GetTask(string task_arn)
+    {
+        // Builds ECS Request
+        DescribeTasksRequest r = new DescribeTasksRequest();
+        List<string> tasks = new List<string>();
+        tasks.Add(task_arn);
+        r.Tasks = tasks;
+        
+        //Send Describe Tasks Request
+        var t = ecs.DescribeTasksAsync(r);
+        t.RunSynchronously();
+
+        //Return result
+        return t.Result.Tasks[0];
+    }
     private void ServerLoop()
     {
         while(running)
@@ -49,29 +65,33 @@ class AuthServer
                 Byte[] bytes = new byte[256];
                 String data = null;
 
+                long num_of_tasks = redis.conn.ListLength("tasks");
 
-                writer.Write("Hey there bud!");
-                writer.Flush();
-                Console.WriteLine("HERE");
+                if(num_of_tasks > 0)
+                {
+                    
+                    var task = GetTask(redis.conn.ListGetByIndex("tasks",0));
+                    int port = task.Containers[0].NetworkBindings[0].HostPort;
+                    string hostname = task.Containers[0].NetworkBindings[0].BindIP;
 
-                byte[] sendBytes = System.Text.Encoding.ASCII.GetBytes("GET / HTTP/1.1");
-                stream.Write(sendBytes, 0, sendBytes.Length);
-                client.Client.Send(sendBytes);
+                    writer.Write("server:" + hostname + ":" + port.ToString());
+                    writer.Flush();
+                    Console.WriteLine("Routed client to " + hostname + ":" + port.ToString());
+                }
+                else
+                {
+                    string msg = "ERROR: No valid game server found!";
+                    Console.WriteLine(msg);
+                    writer.Write(msg);
+                    writer.Flush();
+                }
 
-
-                //BinaryWriter writer = new BinaryWriter(stream);
-                //writer.Write("TEST");
-
-                
-
+                //Read any client response
                 int i;
-
                 while((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                     Console.WriteLine("Recieved: {0}", data);
-
-    
                 }
                 
                 client.Close();
