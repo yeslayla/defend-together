@@ -39,7 +39,7 @@ Parameters:
   SubDomain:
     Type: String
     Description: The subdomain to be used by dt. (ex. `dt.example.com`)
-    Default: dt
+    Default: prod
 
   #------------
   # CloudWatch
