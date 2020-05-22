@@ -61,7 +61,7 @@ Resources:
     Condition: CreateDns
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/dns.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/dns.yaml'
       Parameters:
         environment: !Ref environment
         Domain: !Ref Domain
@@ -74,7 +74,7 @@ Resources:
   IAM:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/iam.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/iam.yaml'
       Parameters:
         environment: !Ref environment
 
@@ -84,7 +84,7 @@ Resources:
   LambdaFunctions:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/lambdas.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/lambdas.yaml'
       Parameters:
         environment: !Ref environment
         release: !Ref release
@@ -98,7 +98,7 @@ Resources:
   CloudWatchRules:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/cloudwatch.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/cloudwatch.yaml'
       Parameters:
         environment: !Ref environment
         Cluster: !GetAtt EcsCluster.Outputs.ClusterArn
@@ -110,7 +110,7 @@ Resources:
   RedisCache:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/redis/top.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/redis/top.yaml'
       Parameters:
         Environment: !Ref environment
         VpcId: !Ref VpcId
@@ -123,7 +123,7 @@ Resources:
   LoadBalancing:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/load_balancing.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/load_balancing.yaml'
       Parameters:
         environment: !Ref environment
         release: !Ref release
@@ -133,7 +133,7 @@ Resources:
   EcsCluster:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/cluster/top.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/cluster/top.yaml'
       Parameters:
         Environment: !Ref environment
         VpcId: !Ref VpcId
@@ -148,7 +148,7 @@ Resources:
   TaskDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/task.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/task.yaml'
       Parameters:
         environment: !Ref environment
         LogGroupName: !Ref LogGroup
@@ -167,7 +167,7 @@ Resources:
   AuthTaskDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::Region}.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/auth_task.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/sumu-stacks/dt/${release}/cloudformation/dt/auth_task.yaml'
       Parameters:
         environment: !Ref environment
         LogGroupName: !Ref LogGroup
