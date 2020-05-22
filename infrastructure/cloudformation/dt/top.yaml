@@ -148,7 +148,7 @@ Resources:
   TaskDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/task.yaml'
+      TemplateURL: !Sub 'https://s3.us-east-2.amazonaws.com/dt-deployment-bucket/${release}/cloudformation/dt/server_task.yaml'
       Parameters:
         environment: !Ref environment
         LogGroupName: !Ref LogGroup
