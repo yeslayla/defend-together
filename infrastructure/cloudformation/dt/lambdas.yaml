@@ -52,8 +52,8 @@ Resources:
       Handler: lambda_function.lambda_handler
       Runtime: python3.7
       Code:
-        S3Bucket: sumu-stacks
-        S3Key: !Sub "dt/${release}/lambda/task_queue_manager.zip"
+        S3Bucket: dt-deployment-bucket
+        S3Key: !Sub "${release}/lambda/task_queue_manager.zip"
       FunctionName: !Sub "FnQueueManager-DT-${environment}"
       Description: Adds and removes tasks from a redis list
       MemorySize: 128
